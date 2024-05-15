@@ -2,5 +2,5 @@ package puppy
 
 func Bark() string {
 
-	return "WoooF !!"
+	return "WoooF ak !!"
 }
