@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     # if: "!contains(github.event.head_commit.modified, 'helm-chart/')"
-    if: "github.event.head_commit.modified != null && !startsWith(join(github.event.head_commit.modified, '\n'), 'helm-chart/')"
+    if: "github.event.head_commit.modified != null && !contains(github.event.head_commit.modified, 'helm-chart/')"
     
     steps:
       - name: Checkout
@@ -26,6 +26,8 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     environment: production
+    if: "github.event.head_commit.modified != null && contains(github.event.head_commit.modified, 'helm-chart/')"
+    
     
     steps:
       - name: Checkout
