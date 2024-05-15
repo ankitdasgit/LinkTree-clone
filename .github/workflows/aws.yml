@@ -11,7 +11,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     environment: production
-    if: "! $(git diff --quiet HEAD^ HEAD --name-only | grep -v '^helm-chart/')"
+    if: "!contains(github.event.head_commit.modified, 'helm-chart/')"
     
     steps:
       - name: Checkout
@@ -25,7 +25,6 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     environment: production
-    if: "$(git diff --quiet HEAD^ HEAD --name-only | grep -q '^helm-chart/')"
     
     steps:
       - name: Checkout
