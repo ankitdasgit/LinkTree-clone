@@ -26,8 +26,7 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     environment: production
-    if: "github.event.head_commit.modified != null && contains(github.event.head_commit.modified, 'helm-chart/')"
-    
+    if: "github.event.head_commit.modified != null && contains(github.event.head_commit.modified, 'helm-chart/') || github.event_name == 'workflow_dispatch'"
     
     steps:
       - name: Checkout
