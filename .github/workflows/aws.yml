@@ -26,7 +26,6 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     environment: production
-    if: "github.event.head_commit.modified != null && startsWith(join(github.event.head_commit.modified, '\n'), 'helm-chart/')"
     
     steps:
       - name: Checkout
