@@ -11,7 +11,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     environment: production
-    if: ${{ !contains(github.event.head_commit.modified, 'helm-chart/') }}
+    if: ${{ !startsWith(github.event.head_commit.modified, 'helm-chart/') }}
     
     steps:
       - name: Checkout
