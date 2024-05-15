@@ -1,4 +1,3 @@
-d
 dhkdh
 testing
 demo
