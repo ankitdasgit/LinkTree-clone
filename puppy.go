@@ -6,5 +6,5 @@ func Bark (){
 }
 
 func HelloP (){
-	return "WOOOOFFFFFFFFFF"
+	return "WOOOOFFFFFFFFF"
 }
