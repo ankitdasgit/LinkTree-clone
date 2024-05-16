@@ -52,6 +52,8 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Deploy
+        run: |
+          echo "Hello World : Deploy"
        
 
 
