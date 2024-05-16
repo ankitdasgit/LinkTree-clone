@@ -9,7 +9,7 @@ jobs:
     name: Check Changes
     runs-on: ubuntu-latest
     outputs:
-      helm_chart_changed: ${{ steps.check.outputs.helm_chart_changed }}
+      skip_jobs: ${{ steps.check.outputs.skip_jobs }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -17,22 +17,18 @@ jobs:
       - name: Check for Helm Chart Changes
         id: check
         run: |
-          git fetch --depth=1 origin ${{ github.event.before }}
-          CHANGED_FILES=$(git diff --name-only FETCH_HEAD ${{ github.sha }})
-          HELM_CHART_CHANGED=false
-          for FILE in $CHANGED_FILES; do
-            if [[ $FILE == helm-chart/* ]]; then
-              HELM_CHART_CHANGED=true
-              break
-            fi
-          done
-          echo "::set-output name=helm_chart_changed::$HELM_CHART_CHANGED"
+          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+          if [[ $CHANGED_FILES == helm-chart/* ]]; then
+            echo "::set-output name=skip_jobs::true"
+          else
+            echo "::set-output name=skip_jobs::false"
+          fi
 
   build:
     name: Build
     runs-on: ubuntu-latest
     environment: production
-    if: ${{ !contains(github.event.head_commit.message, '[skip build]') && !needs.check_changes.outputs.helm_chart_changed }}
+    if: ${{ !contains(github.event.head_commit.message, '[skip build]') && !needs.check_changes.outputs.skip_jobs }}
     needs: check_changes
     steps:
       - name: Checkout
@@ -46,6 +42,7 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     environment: production
+    if: ${{ !needs.check_changes.outputs.skip_jobs }}
     needs: [build]
     steps:
       - name: Checkout
