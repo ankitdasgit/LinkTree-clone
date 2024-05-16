@@ -17,8 +17,8 @@ jobs:
       - name: Check for Helm Chart Changes
         id: check
         run: |
-          CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)
-          if [[ $CHANGED_FILES == helm-chart/* ]]; then
+          CHANGED_FILES=$(git diff-tree --no-commit-id --name-only -r HEAD)
+          if [[ $CHANGED_FILES == *"helm-chart/"* ]]; then
             echo "::set-output name=skip_jobs::true"
           else
             echo "::set-output name=skip_jobs::false"
