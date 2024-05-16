@@ -23,10 +23,10 @@ jobs:
           # Get the list of changed files
           CHANGED_FILES=$(git diff --name-only $(git merge-base HEAD origin/master) HEAD)
           echo "Changed files: $CHANGED_FILES"
-          ONLY_HELM_CHANGES=false
+          ONLY_HELM_CHANGES=true
           for FILE in $CHANGED_FILES; do
             if [[ ! $FILE =~ ^helm-chart/ ]]; then
-              ONLY_HELM_CHANGES=true
+              ONLY_HELM_CHANGES=false
               break
             fi
           done
