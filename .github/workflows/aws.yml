@@ -9,14 +9,34 @@ on:
       
 
 jobs:
+  check-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      only_helm_changes: ${{ steps.check.outputs.only_helm_changes }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Check if only helm-chart folder is modified
+        id: check
+        run: |
+          if git diff --name-only ${{ github.sha }}~1 ${{ github.sha }} | grep -v '^helm-chart/' > /dev/null; then
+            echo "::set-output name=only_helm_changes::false"
+          else
+            echo "::set-output name=only_helm_changes::true"
+          fi
+
+          
   build:
+    needs: check-changes
+    if: ${{ needs.check-changes.outputs.only_helm_changes == 'false' }}
     name: Build
     runs-on: ubuntu-latest
     environment: production
     # if: "!contains(github.event.head_commit.modified, 'helm-chart/')"
     # if: "github.event.head_commit.modified != null && !contains(join(github.event.head_commit.modified, '\n'), 'helm-chart/')"
     # if: "github.event.head_commit.modified != null && !contains(join(github.event.head_commit.modified, '\n'), 'helm-chart/') || join(github.event.head_commit.modified, '\n') == 'helm-chart/'"
-    if: ${{ github.event.commits[0].modified && !startsWith(github.event.commits[0].modified[0], 'helm-chart/') }}
+    # if: ${{ github.event.commits[0].modified && !startsWith(github.event.commits[0].modified[0], 'helm-chart/') }}
     
     
     steps:
@@ -28,6 +48,7 @@ jobs:
           echo "Hello World : Build"
 
   deploy:
+    needs: check-changes
     name: Deploy
     runs-on: ubuntu-latest
     environment: production
