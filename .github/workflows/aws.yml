@@ -11,16 +11,13 @@ jobs:
     outputs:
       skip_jobs: ${{ steps.check.outputs.skip_jobs }}
     steps:
-      - name: Fetch Base Commit
-        run: git fetch origin ${{ github.event.before }}
-
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Check for Helm Chart Changes
         id: check
         run: |
-          CHANGED_FILES=$(git diff --name-only FETCH_HEAD ${{ github.sha }})
+          CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)
           if [[ $CHANGED_FILES == helm-chart/* ]]; then
             echo "::set-output name=skip_jobs::true"
           else
