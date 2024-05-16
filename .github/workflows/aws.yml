@@ -21,7 +21,7 @@ jobs:
         id: check
         run: |
           # Get the list of changed files
-          CHANGED_FILES=$(git diff --name-only $(git merge-base HEAD origin/main) HEAD)
+          CHANGED_FILES=$(git diff --name-only $(git merge-base HEAD origin/master) HEAD)
           echo "Changed files: $CHANGED_FILES"
           ONLY_HELM_CHANGES=true
           for FILE in $CHANGED_FILES; do
@@ -36,7 +36,7 @@ jobs:
           
   build:
     needs: check-changes
-    if: ${{ needs.check-changes.outputs.only_helm_changes == 'true' }}
+    if: ${{ needs.check-changes.outputs.only_helm_changes == 'false' }}
     name: Build
     runs-on: ubuntu-latest
     environment: production
