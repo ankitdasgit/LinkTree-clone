@@ -24,6 +24,7 @@ jobs:
             exit 78 # Skip job with neutral exit code
           else
             echo "No changes detected in helm-chart folder. Proceeding with build job."
+            exit 0 # Continue job execution
           fi
 
       - name: Build
@@ -34,7 +35,7 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     needs: build
-    if: always()
+    if: always() && !cancelled()
     steps:
       - name: Checkout
         uses: actions/checkout@v4
