@@ -6,6 +6,12 @@ on:
       - main
     paths:
       - 'helm-chart/**'
+  workflow_dispatch:
+    inputs:
+      helm_chart_changed:
+        description: 'Flag indicating whether changes occurred in helm-chart folder'
+        required: false
+        default: 'false'
 
 jobs:
   build:
