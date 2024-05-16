@@ -13,7 +13,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     # if: "!contains(github.event.head_commit.modified, 'helm-chart/')"
-    if: "github.event.head_commit.modified != null && !contains(join(github.event.head_commit.modified, '\n'), 'helm-chart/')"
+    # if: "github.event.head_commit.modified != null && !contains(join(github.event.head_commit.modified, '\n'), 'helm-chart/')"
     
     
     steps:
