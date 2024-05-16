@@ -13,7 +13,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     # if: "!contains(github.event.head_commit.modified, 'helm-chart/')"
-    if: "!contains(github.event.head_commit.modified, 'helm-chart/') || contains(github.event.head_commit.modified, 'helm-chart/') && contains(github.event.head_commit.modified, './*')"
+    if: "!contains(github.event.head_commit.modified, 'helm-chart/') || contains(github.event.head_commit.modified, 'helm-chart/') && contains(github.event.head_commit.modified, 'other-folder/')"
     
     steps:
       - name: Checkout
