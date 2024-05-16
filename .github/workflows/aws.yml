@@ -13,7 +13,8 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     environment: production
-    if: ${{ !contains(github.event.head_commit.message, '[skip build]') && !(contains(join(github.event.head_commit.modified, '\n'), 'helm-chart/') && !contains(join(github.event.head_commit.modified, '\n'), ' ')) }}
+    if: ${{ !contains(github.event.head_commit.message, '[skip build]') && contains(join(github.event.head_commit.modified, '\n'), 'helm-chart/') }}
+    # if: ${{ !contains(github.event.head_commit.message, '[skip build]') && !(contains(join(github.event.head_commit.modified, '\n'), 'helm-chart/') && !contains(join(github.event.head_commit.modified, '\n'), ' ')) }}
     # if: ${{ !contains(github.event.head_commit.message, '[skip build]') && contains(join(github.event.head_commit.modified, '\n'), 'helm-chart/') }}
     # if: ${{ !contains(github.event.head_commit.message, '[skip build]') && github.event.head_commit.modified != null && !contains(join(github.event.head_commit.modified, '\n'), 'helm-chart/') }}
     # if: "!contains(join(github.event.head_commit.modified, '\n'), 'helm-chart/')"
@@ -25,7 +26,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+
+      - name: Check for Helm Chart Changes
+        id: helm_chart_check
+        run: |
+          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+          ONLY_HELM_CHANGES=true
+          for FILE in $CHANGED_FILES; do
+            if [[ ! $FILE == helm-chart/* ]]; then
+              ONLY_HELM_CHANGES=false
+              break
+            fi
+          done
+          echo "::set-output name=only_helm_changes::$ONLY_HELM_CHANGES"
+
+          
+
       - name: Build
+        if: steps.helm_chart_check.outputs.only_helm_changes == 'false'
         run: |
           echo "Hello World : Build"
 
