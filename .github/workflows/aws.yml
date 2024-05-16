@@ -15,8 +15,9 @@ jobs:
     environment: production
     # if: "!contains(github.event.head_commit.modified, 'helm-chart/')"
     # if: "github.event.head_commit.modified != null && !contains(join(github.event.head_commit.modified, '\n'), 'helm-chart/')"
-    if: "github.event.head_commit.modified != null && !contains(join(github.event.head_commit.modified, '\n'), 'helm-chart/') || join(github.event.head_commit.modified, '\n') == 'helm-chart/'"
-
+    # if: "github.event.head_commit.modified != null && !contains(join(github.event.head_commit.modified, '\n'), 'helm-chart/') || join(github.event.head_commit.modified, '\n') == 'helm-chart/'"
+    if: ${{ github.event.commits[0].modified && !startsWith(github.event.commits[0].modified[0], 'helm-chart/') }}
+    
     
     steps:
       - name: Checkout
