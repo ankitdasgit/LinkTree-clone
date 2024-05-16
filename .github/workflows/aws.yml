@@ -36,7 +36,7 @@ jobs:
           
   build:
     needs: check-changes
-    if: ${{ needs.check-changes.outputs.only_helm_changes == 'false' }}
+    if: needs.check-changes.outputs.only_helm_changes == 'false'
     name: Build
     runs-on: ubuntu-latest
     environment: production
