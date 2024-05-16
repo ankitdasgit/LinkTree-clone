@@ -5,19 +5,13 @@ on:
     branches:
       - main
     paths:
-      - 'helm-chart/**'
-  workflow_dispatch:
-    inputs:
-      helm_chart_changed:
-        description: 'Flag indicating whether changes occurred in helm-chart folder'
-        required: false
-        default: 'false'
+      - '**' # Trigger the workflow on any changes
 
 jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.helm_chart_changed != 'true' && !contains(github.event.head_commit.message, '[skip build]') }}
+    if: ${{ github.event_name != 'workflow_dispatch' && github.event.head_commit.message != '[skip build]' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -40,7 +34,7 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     needs: build
-    if: always() && github.event.inputs.helm_chart_changed != 'true'
+    if: always()
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -48,7 +42,6 @@ jobs:
       - name: Deploy
         run: |
           echo "Hello World: Deploy"
-
 
 
 
