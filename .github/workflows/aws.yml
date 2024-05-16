@@ -20,7 +20,8 @@ jobs:
       - name: Check if only helm-chart folder is modified
         id: check
         run: |
-          CHANGED_FILES=$(git diff --name-only ${{ github.sha }}~1 ${{ github.sha }})
+          # Get the list of changed files
+          CHANGED_FILES=$(git diff --name-only $(git merge-base HEAD origin/main) HEAD)
           echo "Changed files: $CHANGED_FILES"
           ONLY_HELM_CHANGES=true
           for FILE in $CHANGED_FILES; do
