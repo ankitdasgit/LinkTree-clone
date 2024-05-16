@@ -1,4 +1,4 @@
-hkd
+hk
 testing
 demo
 test
