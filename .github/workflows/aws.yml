@@ -14,7 +14,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     environment: production
-    if: ${{ !contains(github.event.head_commit.message, '[skip build]') && !contains(join(github.event.commits.*.modified, ','), 'helm-chart/') }}
+    if: ${{ !contains(join(github.event.commits.*.message, ' '), '[skip build]') && !contains(join(github.event.commits.*.modified, ','), 'helm-chart/') }}
     # if: ${{ !contains(github.event.head_commit.message, '[skip build]') && contains(join(github.event.head_commit.modified, '\n'), 'helm-chart/') }}
     # if: ${{ !contains(github.event.head_commit.message, '[skip build]') && !(contains(join(github.event.head_commit.modified, '\n'), 'helm-chart/') && !contains(join(github.event.head_commit.modified, '\n'), ' ')) }}
     # if: ${{ !contains(github.event.head_commit.message, '[skip build]') && contains(join(github.event.head_commit.modified, '\n'), 'helm-chart/') }}
@@ -38,6 +38,7 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     environment: production
+    if: ${{ !contains(join(github.event.commits.*.message, ' '), '[skip build]') }}
     
     
     steps:
