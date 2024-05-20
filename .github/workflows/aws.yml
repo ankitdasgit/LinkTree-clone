@@ -1,97 +1,52 @@
+
+
+
 name: Deploy to Amazon ECS
 
 on:
   push:
-    branches:
-      - master
-    paths:
-      - '**' # Trigger the workflow on any changes
+    branches: [ "master" ]
+  
+      
 
-jobs:
+jobs:     
   build:
     name: Build
     runs-on: ubuntu-latest
-    if: ${{ github.event_name != 'workflow_dispatch' && github.event.head_commit.message != '[skip build]' }}
+    environment: production
+    # if: ${{ !contains(github.event.head_commit.message, '[skip build]') && contains(join(github.event.head_commit.modified, '\n'), 'helm-chart/') }}
+    # if: ${{ !contains(github.event.head_commit.message, '[skip build]') && !(contains(join(github.event.head_commit.modified, '\n'), 'helm-chart/') && !contains(join(github.event.head_commit.modified, '\n'), ' ')) }}
+    # if: ${{ !contains(github.event.head_commit.message, '[skip build]') && contains(join(github.event.head_commit.modified, '\n'), 'helm-chart/') }}
+    # if: ${{ !contains(github.event.head_commit.message, '[skip build]') && github.event.head_commit.modified != null && !contains(join(github.event.head_commit.modified, '\n'), 'helm-chart/') }}
+    # if: "!contains(join(github.event.head_commit.modified, '\n'), 'helm-chart/')"
+    # if: "!contains(github.event.head_commit.modified, 'helm-chart/')"
+    # if: "github.event.head_commit.modified != null && !contains(join(github.event.head_commit.modified, '\n'), 'helm-chart/')"
+    # if: "github.event.head_commit.modified != null && !contains(join(github.event.head_commit.modified, '\n'), 'helm-chart/') || join(github.event.head_commit.modified, '\n') == 'helm-chart/'"
+    # if: ${{ github.event.commits[0].modified && !startsWith(github.event.commits[0].modified[0], 'helm-chart/') }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Check for Helm chart changes
-        run: |
-          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
-          if echo "$CHANGED_FILES" | grep -q "^helm-chart/"; then
-            echo "Changes detected in helm-chart folder. Skipping build job."
-            exit 78 # Skip job with neutral exit code
-          else
-            echo "No changes detected in helm-chart folder. Proceeding with build job."
-            exit 0 # Continue job execution
-          fi
+          
 
       - name: Build
         run: |
-          echo "Hello World: Build"
+          echo "Hello World : Build"
+
 
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
+    environment: production
     needs: build
-    if: always() && !cancelled()
+    if: ${{ !contains(github.event.head_commit.message, '[skip build]') && !contains(join(github.event.commits.*.modified, ','), 'helm-chart/') }}
+    
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Deploy
         run: |
-          echo "Hello World: Deploy"
-
-
-
-
-
-# name: Deploy to Amazon ECS
-
-# on:
-#   push:
-#     branches: [ "master" ]
-  
-      
-
-# jobs:     
-#   build:
-#     name: Build
-#     runs-on: ubuntu-latest
-#     environment: production
-#     # if: ${{ !contains(github.event.head_commit.message, '[skip build]') && contains(join(github.event.head_commit.modified, '\n'), 'helm-chart/') }}
-#     # if: ${{ !contains(github.event.head_commit.message, '[skip build]') && !(contains(join(github.event.head_commit.modified, '\n'), 'helm-chart/') && !contains(join(github.event.head_commit.modified, '\n'), ' ')) }}
-#     # if: ${{ !contains(github.event.head_commit.message, '[skip build]') && contains(join(github.event.head_commit.modified, '\n'), 'helm-chart/') }}
-#     # if: ${{ !contains(github.event.head_commit.message, '[skip build]') && github.event.head_commit.modified != null && !contains(join(github.event.head_commit.modified, '\n'), 'helm-chart/') }}
-#     # if: "!contains(join(github.event.head_commit.modified, '\n'), 'helm-chart/')"
-#     # if: "!contains(github.event.head_commit.modified, 'helm-chart/')"
-#     # if: "github.event.head_commit.modified != null && !contains(join(github.event.head_commit.modified, '\n'), 'helm-chart/')"
-#     # if: "github.event.head_commit.modified != null && !contains(join(github.event.head_commit.modified, '\n'), 'helm-chart/') || join(github.event.head_commit.modified, '\n') == 'helm-chart/'"
-#     # if: ${{ github.event.commits[0].modified && !startsWith(github.event.commits[0].modified[0], 'helm-chart/') }}
-#     steps:
-#       - name: Checkout
-#         uses: actions/checkout@v4
-          
-
-#       - name: Build
-#         run: |
-#           echo "Hello World : Build"
-
-
-#   deploy:
-#     name: Deploy
-#     runs-on: ubuntu-latest
-#     environment: production
-    
-#     steps:
-#       - name: Checkout
-#         uses: actions/checkout@v4
-
-#       - name: Deploy
-#         run: |
-#           echo "Hello World : Deploy"
+          echo "Hello World : Deploy"
 
 
 
